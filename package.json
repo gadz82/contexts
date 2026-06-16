@@ -1,7 +1,7 @@
 {
   "name": "@orchid-ai/contexts",
   "version": "0.1.0",
-    "description": "Zero-config, deterministic context package manager for AI agent profiles (AGENTS.md, CLAUDE.md, ...).",
+  "description": "Zero-config, deterministic context package manager for AI agent profiles (AGENTS.md, CLAUDE.md, ...).",
   "type": "module",
   "bin": {
     "contexts": "bin/contexts.js"
@@ -25,7 +25,11 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "lint": "biome check ."
+    "lint": "biome check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,json,md}": "biome check --write --no-errors-on-unmatched"
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
@@ -36,8 +40,12 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
     "@types/node": "^20.14.0",
     "@vitest/coverage-v8": "^2.1.9",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
