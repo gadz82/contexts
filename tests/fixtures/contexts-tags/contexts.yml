@@ -1,0 +1,18 @@
+version: "1"
+name: contexts-tags
+description: Fixture exercising tag overrides
+
+mappings:
+  src/api:
+    context_source: ./agents/backend/AGENTS.md
+    description: Default API context
+
+tags:
+  experimental:
+    mappings:
+      src/api:
+        context_source: ./agents/backend/AGENTS.exp.md
+        description: Experimental API context
+      src/docs:
+        context_source: ./agents/docs/AGENTS.md
+        description: Docs context (tag-only)

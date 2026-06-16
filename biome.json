@@ -1,0 +1,50 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "organizeImports": { "enabled": true },
+  "files": {
+    "ignore": [
+      "dist",
+      "coverage",
+      "node_modules",
+      ".contexts",
+      "tests/fixtures",
+      ".claude",
+      ".knowledge",
+      "docs"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "off",
+        "useNodejsImportProtocol": "error"
+      },
+      "suspicious": {
+        "noConsoleLog": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "include": ["src/ui/reporter.ts"],
+      "linter": { "rules": { "suspicious": { "noConsoleLog": "off" } } }
+    },
+    {
+      "include": ["tests/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noConsoleLog": "off" },
+          "performance": { "noDelete": "off" }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+version: "1"
+name: contexts-root
+mappings:
+  ".":
+    context_source: ./agents/root/AGENTS.md
+    description: Repo-wide conventions
+  src/api:
+    context_source: ./agents/backend/AGENTS.md
+    description: API conventions

@@ -1,0 +1,6 @@
+version: "1"
+mappings:
+  src/api:
+    context_source: ./agents/backend/AGENTS.md
+  "./src/api/":
+    context_source: ./agents/backend/AGENTS.md

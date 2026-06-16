@@ -1,0 +1,11 @@
+version: "1"
+name: contexts-basic
+description: Basic two-mapping fixture for tests
+
+mappings:
+  src/components:
+    context_source: ./agents/frontend/AGENTS.md
+    description: React component architecture context
+  src/api:
+    context_source: ./agents/backend/AGENTS.md
+    description: API controller conventions

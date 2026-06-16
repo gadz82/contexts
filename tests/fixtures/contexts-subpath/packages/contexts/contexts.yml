@@ -1,0 +1,6 @@
+version: "1"
+name: contexts-subpath
+mappings:
+  src/api:
+    context_source: ./agents/backend/AGENTS.md
+    description: API conventions (hosted under a subpath)
