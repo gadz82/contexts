@@ -160,6 +160,10 @@ message. For shared/CI use, host the contexts repo in git.
 failure · `4` lock integrity (missing/invalid/hash mismatch) · `5` status/check
 findings.
 
+## Acknowledgments
+
+Inspired by Vercel's [skills](https://github.com/vercel/skills) library.
+
 ## Development
 
 ```sh
@@ -168,4 +172,3 @@ npm run lint && npm run typecheck && npm test && npm run build
 ```
 
 The full specification lives in [`docs/`](./docs) and is the source of truth.
-Release process: [`docs/RELEASE.md`](./docs/RELEASE.md).
