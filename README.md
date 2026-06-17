@@ -240,7 +240,7 @@ findings.
 
 ## Acknowledgments
 
-Inspired by Vercel's [skills](https://github.com/vercel/skills) library.
+Inspired by Vercel's [skills](https://github.com/vercel-labs/skills) library.
 
 ## Development
 
