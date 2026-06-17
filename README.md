@@ -124,11 +124,11 @@ the same variant.
 ## CI recipe
 
 ```yaml
-- run: npx contexts install   # restore the pinned state (fails loudly on drift)
-- run: npx contexts status    # exit 5 if any link is broken/modified/missing
+- run: npx agent-contexts install   # restore the pinned state (fails loudly on drift)
+- run: npx agent-contexts status    # exit 5 if any link is broken/modified/missing
 ```
 
-`contexts install` reads **only** `contexts.lock` — it never needs `contexts.yml`
+`agent-contexts install` reads **only** `contexts.lock` — it never needs `contexts.yml`
 at restore time, so CI is deterministic.
 
 ## How it works
@@ -146,11 +146,11 @@ at restore time, so CI is deterministic.
 
 Symlinks need Developer Mode (or admin) for `SeCreateSymbolicLinkPrivilege`.
 Without it, `contexts` automatically copies files instead and warns once;
-`contexts update` rewrites those copies. Lock keys are always POSIX.
+`agent-contexts update` rewrites those copies. Lock keys are always POSIX.
 
 ## Local-source caveat
 
-A local-path source (`contexts add ../shared`) stores an **absolute** path in the
+A local-path source (`agent-contexts add ../shared`) stores an **absolute** path in the
 lock — it's machine-specific. `install` on another machine will fail with a clear
 message. For shared/CI use, host the contexts repo in git.
 

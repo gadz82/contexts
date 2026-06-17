@@ -1,5 +1,5 @@
 {
-  "name": "@orchid-ai/contexts",
+  "name": "agent-contexts",
   "version": "0.1.0",
   "description": "Zero-config, deterministic context package manager for AI agent profiles (AGENTS.md, CLAUDE.md, ...).",
   "type": "module",
