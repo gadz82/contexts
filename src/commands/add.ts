@@ -303,8 +303,7 @@ function computeSelectable(
 ): MappingDiagnostic[] {
   return diagnostics.filter((d) => {
     if (requested && !requested.all && !requested.values.includes(d.target)) return false;
-    if (d.state === "drifted" && !includeDrifted) return false;
-    return true;
+    return !(d.state === "drifted" && !includeDrifted);
   });
 }
 
