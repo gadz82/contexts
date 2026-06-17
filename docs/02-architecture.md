@@ -61,6 +61,7 @@ Every mutating command ends with a summary table; `status` recomputes truth from
 | Lockfile service | `core/lockfile.ts` | Read/write/validate `contexts.lock`; stable key ordering for clean diffs |
 | Hasher | `core/hash.ts` | SHA-256 of files; directory digest for local sources |
 | UI | `ui/prompts.ts`, `ui/reporter.ts` | clack prompts, summary tables, drift reports; all skippable via flags |
+| Reset | `commands/reset.ts` | Remove all links, restore `.bak` backups, clean lock + cache |
 
 ## Execution pipelines
 
@@ -94,3 +95,16 @@ Every mutating command ends with a summary table; `status` recomputes truth from
 ## Future (explicitly out of v1 scope)
 
 Glob targets in `contexts.yml` (`src/services/*`), content templating/variables, `remove` and `init` commands, multi-file profile bundles (link a directory, not just a file), a `check --ci` strict mode beyond `status --json`.
+
+---
+
+## `reset` pipeline
+
+`reset` is the inverse of `add`: it returns the project to its pre-contexts state.
+
+1. Read `contexts.lock`; if missing, report nothing to do.
+2. For each lock entry × each `linkedAs` name: check ownership of the file at the link path (symlink into cache, or regular file matching lock hash).
+3. Remove owned links. If a `<name>.bak` backup exists, rename it back to `<name>` (restoring pre-`add` content).
+4. Warn about any `.bak.2`, `.bak.3` etc. that will remain — only the first `.bak` is restored.
+5. Delete `contexts.lock` and `.contexts/` cache.
+6. Print summary: removed N link(s), restored M backup(s).

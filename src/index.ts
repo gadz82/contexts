@@ -1,5 +1,5 @@
 /**
- * commander program: registers the five commands + global flags, wires the
+ * commander program: registers the commands + global flags, wires the
  * single top-level error handler that formats `CliError` and exits with the
  * mapped code.
  *
@@ -10,6 +10,7 @@ import { Command, CommanderError } from "commander";
 import { addCommand } from "./commands/add.js";
 import { installCommand } from "./commands/install.js";
 import { listCommand } from "./commands/list.js";
+import { resetCommand } from "./commands/reset.js";
 import { statusCommand } from "./commands/status.js";
 import { updateCommand } from "./commands/update.js";
 import * as reporter from "./ui/reporter.js";
@@ -107,6 +108,12 @@ function buildProgram(): Command {
     .description("pretty table straight from the lock")
     .action(async (_o, cmd: Command) => {
       await listCommand(withGlobals(cmd));
+    });
+
+  withCommonFlags(program.command("reset"))
+    .description("remove all contexts links and restore .bak backups")
+    .action(async (_o, cmd: Command) => {
+      await resetCommand(withGlobals(cmd));
     });
 
   return program;

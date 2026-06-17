@@ -10,8 +10,20 @@
 import path from "node:path";
 import { CacheService } from "../core/cache.js";
 import { hashFile } from "../core/hash.js";
-import { type ConflictChoice, executeLinks, planLinks } from "../core/linker.js";
-import { type LockEntry, mergeEntries, readLock, writeLock } from "../core/lockfile.js";
+import {
+  type ConflictChoice,
+  type KnownLink,
+  executeLinks,
+  planLinks,
+  pruneOrphans,
+} from "../core/linker.js";
+import {
+  type LockEntry,
+  type LockFile,
+  mergeEntries,
+  readLock,
+  writeLock,
+} from "../core/lockfile.js";
 import { type ManifestMapping, diagnose, loadManifest, resolveMappings } from "../core/manifest.js";
 import { parseSource } from "../core/source.js";
 import type {
@@ -45,11 +57,12 @@ export interface AddOptions {
 export async function addCommand(source: string, opts: AddOptions): Promise<void> {
   const cwd = process.cwd();
   const resolved = parseSource(source, cwd);
+  const cache = new CacheService(cwd);
 
   const sp = spinner(`fetching ${resolved.source}`);
   let materialized: Awaited<ReturnType<CacheService["materialize"]>>;
   try {
-    materialized = await new CacheService(cwd).materialize(resolved);
+    materialized = await cache.materialize(resolved);
   } finally {
     sp.stop(`fetched ${resolved.source}`);
   }
@@ -101,6 +114,18 @@ export async function addCommand(source: string, opts: AddOptions): Promise<void
   const newEntries = buildLockEntries(executed, selections, resolved, materialized, tag);
   const existing = await readLock(cwd);
   const lock = mergeEntries(existing, newEntries);
+
+  // Prune orphan links that were dropped by this reconciliation (e.g., when
+  // linkedAs shrinks from [AGENTS.md, CLAUDE.md] to [AGENTS.md]).
+  if (existing) {
+    const oldLinks = toKnownLinks(existing);
+    const newLinks = toKnownLinks(lock);
+    const { removed } = await pruneOrphans(oldLinks, newLinks, cwd, cache.cacheRoot);
+    if (removed.length > 0) {
+      reporter.info(`pruned ${removed.length} orphan link(s)`);
+    }
+  }
+
   await writeLock(cwd, lock);
 
   printSummary(executed, Object.keys(lock.contexts).length);
@@ -281,4 +306,10 @@ function computeSelectable(
     if (d.state === "drifted" && !includeDrifted) return false;
     return true;
   });
+}
+
+function toKnownLinks(lock: LockFile): KnownLink[] {
+  return Object.entries(lock.contexts).flatMap(([target, entry]) =>
+    entry.linkedAs.map((linkName) => ({ target, linkName, computedHash: entry.computedHash })),
+  );
 }

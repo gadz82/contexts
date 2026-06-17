@@ -78,6 +78,22 @@ Entry states:
 
 Pretty table straight from the lock: target, link names, link mode, source, short ref, short hash. `--json` for scripts. No disk inspection (that's `status`).
 
+## `contexts reset`
+
+Remove all contexts links, restore original `.bak` backups, and clean up `contexts.lock` + `.contexts/` cache. Returns the project to its pre-`add` state.
+
+```sh
+npx contexts reset -y     # non-interactive: skip confirmation
+npx contexts reset --dry-run  # preview without mutating
+```
+
+Behavior detail:
+- For each lock entry, removes the link if it is owned by contexts (symlink into cache, or regular file matching the lock hash) OR if a `.bak` backup exists to restore.
+- Restores `.bak` → original filename (reverse of the backup created by `add --force`). Only the first `.bak` is restored; `.bak.2`, `.bak.3` etc. are left in place with a warning.
+- Foreign files at link paths with no `.bak` backup are preserved and warned about.
+- Deletes `contexts.lock` and `.contexts/` cache directory.
+- Interactive mode (TTY without `-y`): prompts for confirmation. Non-interactive without `-y`: throws exit 2 telling the user to pass `--yes`.
+
 ---
 
 ## Exit codes

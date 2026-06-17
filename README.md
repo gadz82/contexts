@@ -20,9 +20,9 @@ makes that context **versioned, installable, and reproducible**.
 Node ≥ 20.
 
 ```sh
-npx @gadz82/contexts <command>          # no install
+npx agent-contexts <command>          # no install
 # or:
-npm i -g @gadz82/contexts && contexts <command>
+npm i -g agent-contexts && contexts <command>
 ```
 
 ## Quickstart
@@ -75,8 +75,8 @@ root (or under a subpath) plus the profile files it distributes:
 
 ```yaml
 version: "1"
-name: gadz82-engineering-contexts
-description: Curated agent context for gadz82 services
+name: engineering-contexts
+description: Curated agent context for services
 mappings:
   src/components:
     context_source: ./agents/frontend/AGENTS.md

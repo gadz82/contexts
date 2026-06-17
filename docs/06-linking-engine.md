@@ -43,7 +43,7 @@ Backups are never overwritten silently and never tracked in the lock.
 4. Copy fallback: catch `EPERM`/`EACCES`/`ENOSYS`/`UNKNOWN` from symlink → `fs.copyFile(cachedFile, linkPath)`, set op mode to `copy`, collect for a single prominent end-of-run warning ("symlinks unavailable — N files were copied; updates require re-running contexts update; enable Windows Developer Mode for symlinks"). Any other error → bubble up (exit 1).
 5. Return executed ops; caller writes `linkMode` per entry into the lock from what *actually* happened, not what was requested.
 
-## Orphan pruning (used by `update`, future `remove`)
+## Orphan pruning (used by `add`, `update`, future `remove`)
 
 Given previous lock entries vs new desired state, compute orphans = (old target × linkName) pairs absent from the new set. For each orphan: remove only if it is a symlink resolving into our cache OR a regular file hashing to the old lock entry's `computedHash`. Otherwise leave it and warn ("not removing src/api/AGENTS.md — content doesn't match what contexts installed"). This enforces the "never delete files we don't own" invariant (02 §Invariants).
 
