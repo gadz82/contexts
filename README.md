@@ -42,9 +42,33 @@ npx contexts status
 
 # List what's installed, straight from the lock
 npx contexts list
+
+# Undo: remove links, restore backups, delete lock + cache
+npx contexts reset --yes
 ```
 
-### Source forms
+## Commands
+
+### `contexts add <source>`
+
+Fetch a contexts repo, select mappings, create links, write lock. Re-adding the
+same source reconciles entries (not duplicates) and prunes dropped link names.
+
+```sh
+# GitHub shorthand: link into all valid targets with AGENTS.md + CLAUDE.md
+contexts add your-org/engineering-contexts --link-as AGENTS.md CLAUDE.md
+
+# Pre-select a single target, pick link names on the CLI
+contexts add ../shared-contexts --target src/api --link-as AGENTS.md CLAUDE.md -y
+
+# Install a tagged context variant (e.g. experimental tone)
+contexts add your-org/repo --tag experimental --force -y
+
+# Dry-run: preview the plan without touching anything
+contexts add your-org/repo --dry-run
+```
+
+#### Source forms
 
 ```sh
 contexts add your-org/repo                                   # GitHub shorthand
@@ -54,7 +78,61 @@ contexts add git@github.com:your-org/repo.git#v2             # SSH + ref pin
 contexts add ../shared-contexts                              # local path
 ```
 
-### Common flags
+### `contexts install`
+
+Headless restore from `contexts.lock` — the `npm ci` equivalent. Reads only the
+lock, never the manifest. Deterministic and idempotent.
+
+```sh
+contexts install
+contexts install --force   # re-pin the lock when hashes mismatch upstream
+```
+
+### `contexts update [targets...]`
+
+Fetch upstream, diff, apply, re-pin. Can switch tags in-place.
+
+```sh
+contexts update                     # all sources, interactive confirm
+contexts update --check             # CI guard: exit 5 if updates are available, else 0
+contexts update src/api -y          # only entries whose target matches, skip confirm
+contexts update --tag experimental  # switch context variant without upstream change
+```
+
+### `contexts status`
+
+Recompute truth from disk. Read-only; exit 5 on any `broken` / `modified` /
+`missing` / `drifted` entry. CI-friendly.
+
+```sh
+contexts status
+contexts status --remote    # also check for newer upstream refs (network)
+contexts status --json      # machine-readable, e.g. for CI pipelines
+```
+
+### `contexts list` (alias `ls`)
+
+Pretty table straight from `contexts.lock`: target, link names, mode, source,
+short ref, short hash. No disk inspection.
+
+```sh
+contexts list
+contexts ls
+contexts list --json        # machine-readable output
+```
+
+### `contexts reset`
+
+Remove all contexts links, restore original `.bak` backups, and delete
+`contexts.lock` + `.contexts/` cache. Returns the project to its pre-`add`
+state.
+
+```sh
+contexts reset --dry-run    # preview what would be removed and restored
+contexts reset --yes        # non-interactive: skip the confirmation prompt
+```
+
+## Common flags
 
 | Flag | Applies to | Meaning |
 |---|---|---|
